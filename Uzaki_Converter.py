@@ -3,7 +3,8 @@ import time
 
 
 class Gen_teacher:
-    def __init__(self,address,SendComTuple,exeFile):
+    def __init__(self,address,SendComTuple,exeFile,go_depth):
+
         self.usi=ayane.UsiEngine()
 
         self.address=address
@@ -11,6 +12,8 @@ class Gen_teacher:
         self.exeFile=exeFile
 
         self.settings_of_engine=SendComTuple
+
+        self.go_depth=go_depth
         
         self.read_print=(address,"を開きます")
 
@@ -34,7 +37,8 @@ class Gen_teacher:
     
 
     def PonaMethod(self):#マルチスレッドでないタイプ
-        with open("Normal_Teacher.txt",mode="w") as f:pass
+        fname="".join([self.address[:-5],"_teacher.txt"])
+        with open(fname,mode="w") as f:pass
         #ファイル生成
 
         self.usi.debug_print=False
@@ -52,15 +56,19 @@ class Gen_teacher:
         print("generating start")
 
         for i in self.read_sfen:
+            self.result="1"
             self.position = i.split()
+            if len(self.position)%2==1:#奇数なら後手勝利
+                self.result="-1"
+            else:#偶数なら先手勝利
+                self.result="1"
+
             
             self.send_sfen="startpos moves"
             
             self.tesuu=0
         
             self.teban="b"
-
-            self.result="1"
 
             self.output=""
 
@@ -105,18 +113,21 @@ class Gen_teacher:
                         "\ne\n"
                     ])
                     #sfen変換終了
-                    print(self.output) #デバッグ用
+                    print(".",end="",flush=True) #デバッグ用
                     
-                    with open("Normal_Teacher.txt",mode="a") as f:
+                    with open(fname,mode="a") as f:
                         f.write(self.output)
                     self.renew(j,self.teban) #renew(self,str,str)
                     #局面を更新
                     self.tesuu+=1
-                    if self.result=="1" and self.teban=="b":
+                    if self.result=="1":
                         self.result="-1"
-                        self.teban="w"
+                    
                     else:
                         self.result="1"
+                    if self.teban=="b":
+                        self.teban="w"
+                    else:
                         self.teban="b"
         print("all done")
 
@@ -189,7 +200,7 @@ class Gen_teacher:
 
     def get_score(self):
         self.usi.usi_position(self.send_sfen)
-        self.usi.usi_go_and_wait_bestmove("")
+        self.usi.usi_go_and_wait_bestmove("".join(["go depth ",self.go_depth,"\n"]))
         #ここでAyaneはUsiThinkResultクラスをthink_resultに代入。
         self.ThinkResult=self.usi.think_result.to_string().split()
         self.cp_admission=0
@@ -215,10 +226,10 @@ class Gen_teacher:
         独自設定
         """
         fen="".join(self.output_sfen)
-        if int(self.tesuu) <10 and "1BR6" in fen and self.result=="1":
+        if int(self.tesuu) <10 and "1BR6" in fen and self.teban=="b":
             self.unique="True"
             self.score += 1
-        if self.unique=="True" and self.result=="1":
+        if self.unique=="True" and self.teban=="b":
             if int(self.tesuu) <17 and self.board[7][5]=="K" or int(self.tesuu) <19 and self.board[7][6]=="K" or int(self.tesuu) <19 and self.board[8][6]=="K" or int(self.tesuu) < 21 and self.board[7][7]=="K":
                 self.score+=1
                 if int(self.tesuu) <21 and self.board[7][6]=="S" or self.board[7][3]=="S" or self.board[7][4]=="G":
@@ -230,10 +241,10 @@ class Gen_teacher:
                 if int(self.tesuu) <41 and self.board[7][7]=="K" and self.board[6][7]=="S" and self.board[7][6]=="G" and self.board[5][6]=="P":
                     self.score+=3 #銀冠
             
-        if int(self.tesuu) <10 and "6rb1" in fen and self.result=="-1":
+        if int(self.tesuu) <10 and "6rb1" in fen and self.teban=="w":
             self.unique="True"
             self.score += 1
-        if self.unique=="True" and self.result=="-1":
+        if self.unique=="True" and self.teban=="w":
             if int(self.tesuu) <17 and self.board[1][3]=="k" or int(self.tesuu) <19 and self.board[1][2]=="k" or int(self.tesuu) <19 and self.board[1][1]=="k" or int(self.tesuu) < 21 and self.board[0][2]=="k":
                 self.score+=1
                 if int(self.tesuu) <21 and self.board[1][2]=="s" or self.board[1][5]=="s" or self.board[1][4]=="g":
@@ -300,7 +311,7 @@ class Conduct_Converter:
         #クラス内のbestmoveをいじくってほしい
 
 
-        self.threads = "threads 2\n"
+        self.threads = "threads 6\n"
         #YaneuraOu側に割り当てるスレッド。
         #Depthに応じて調整
         #この時点で使用するスレッド数は
@@ -317,8 +328,9 @@ class Conduct_Converter:
 
         self.bookmoves = "bookmoves 32\n"
         #定跡を何手目まで読み込むか
-
-        self.setoption_name_DepthLimit_value="setoption_name_DepthLimit_value 6\n"
+        
+        self.depth="1"
+        self.setoption_name_DepthLimit_value="".join(["setoption_name_DepthLimit_value ",self.depth,"\n"])
         #読みを深さ6で打ち切り。
         #こちらを設定すると、読みすぎることなく早く終わってくれるため。
         #YaneuraOuのgensfen並みの生成速度を目指したい
@@ -339,7 +351,6 @@ class Conduct_Converter:
         #opFileはファイル名
         #openに必要
 
-        self.depth="6"
         self.SendComTuple=([
             self.multipv,
             #self.threads,
@@ -350,7 +361,7 @@ class Conduct_Converter:
         ])
 
     def Calling_Class(self):
-        gen = Gen_teacher(self.opFile,self.SendComTuple,self.exeFile)
+        gen = Gen_teacher(self.opFile,self.SendComTuple,self.exeFile,self.depth)
         #クラスを短く。
         #__init__に値を渡してクラス生成
         gen.read()
