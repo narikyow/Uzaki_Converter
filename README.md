@@ -19,7 +19,7 @@ https://github.com/yaneurao/Ayane
 
 # 最近
 resultを、sfenの要素数から勝敗判別して正しい値を出すようにしました。  
-それと、YaneuraOuのgoコマンドにもdepthを設定することで、1sで150KBくらい(depth 1のとき)書き込むようになりました
+それと、YaneuraOuのgoコマンドにもdepthを設定することで、1sで50KBくらい(depth 1のとき)書き込むようになりました
 
 # 反省
 並列処理に苦戦して実装できなかった。  
