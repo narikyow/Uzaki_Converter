@@ -13,9 +13,9 @@ https://github.com/yaneurao/Ayane
 名前の由来はPythonのエラーがうざいから。
 (自分の力不足)
 
-3.Uzaki_Converterの場所にAyaneruのshogiフォルダがあればOK
+3. Uzaki_Converterの場所にAyaneruのshogiフォルダがあればOK
 
-4.sfenファイルを持ってきて、cmdから実行
+4. sfenファイルを持ってきて、cmdから実行
 
 # 反省
 並列処理に苦戦して実装できなかった。
