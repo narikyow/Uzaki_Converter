@@ -25,7 +25,6 @@ class Gen_teacher:
 
         self.send_sfen="startpos moves"
 
-        self.unique=""
         #独自設定用
 
     
@@ -35,6 +34,114 @@ class Gen_teacher:
             self.read_sfen=tuple([i for i in pos])
             #1行ごとに読み取り
     
+    def Non_Lambda(self):
+        #引き分けの棋譜とかはこれで。
+        #例えば、序盤16手目までを集中的に学習させたいけど、棋譜が短すぎなときなんかに使うとよい
+        self.result="0"
+        fname="".join([self.address[:-5],"_teacher.txt"])
+        with open(fname,mode="w") as f:pass
+        #ファイル生成
+
+        self.usi.debug_print=False
+
+        self.usi.connect(self.exeFile)
+        #YaneuraOuの接続
+        send="".join(self.settings_of_engine)
+        self.usi.send_command(send)
+        time.sleep(1)
+        self.usi.send_command("isready\n")
+        time.sleep(1)
+        self.usi.send_command("usinewgame\n")
+        #YaneuraOuの設定
+
+        print("generating start")
+        length=len(self.read_sfen)
+
+        Finish=0
+
+        for i in self.read_sfen:
+            
+
+            self.position = i.split()
+
+            self.position_length=len(self.position)-1
+            
+            self.sente_unique=""
+
+            self.gote_unique=""
+            
+            self.send_sfen="startpos moves"
+            
+            self.tesuu=0
+        
+            self.teban="b"
+
+            self.output=""
+
+            self.output_sfen=""
+            
+            self.tegoma_sfen="-"
+
+            self.tegoma_dict={"R":0,"B":0,"G":0,"S":0,"N":0,"L":0,"P":0,
+                          "r":0,"b":0,"g":0,"s":0,"n":0,"l":0,"p":0}
+            
+            self.board=[
+            #将棋のsfenの数字が逆転するので、処理を変える必要がある
+            # 0   1   2   3   4   5   6   7   8  ...配列
+            # 9   8   7   6   5   4   3   2   1  ...将棋
+            ["l","n","s","g","k","g","s","n","l"],#0
+            ["o","r","o","o","o","o","o","b","o"],#1
+            ["p","p","p","p","p","p","p","p","p"],#2
+            ["o","o","o","o","o","o","o","o","o"],#3
+            ["o","o","o","o","o","o","o","o","o"],#4
+            ["o","o","o","o","o","o","o","o","o"],#5
+            ["P","P","P","P","P","P","P","P","P"],#6
+            ["o","B","o","o","o","o","o","R","o"],#7
+            ["L","N","S","G","K","G","S","N","L"]]#8
+
+            for j in self.position:
+
+                if "startpos" not in j and "moves" not in j:
+                    #局面をsfenに変換
+                    self.changing_sfen()
+                    #self.output_sfenに現在のboardのsfenを格納
+
+                    self.renew(j,self.teban) #renew(self,str,str)
+                    #局面を更新
+                    #評価値の関係上この順番
+                    
+                    self.get_score()
+                    #次の一手を打った局面の相手の最善手の評価値を反転させたものを出す。
+                    #処理して評価値をself.scoreに代入
+                    
+                    self.output="".join([
+                        "sfen ",self.output_sfen,
+                        " ",self.teban,
+                        " ",self.tegoma_sfen,
+                        " 0\nmove ",j,
+                        "\nscore ",str(self.score),
+                        "\nply ",str(self.tesuu),
+                        "\nresult ",self.result,
+                        "\ne\n"
+                    ])
+                    #sfen変換終了
+                    #print(".",end="",flush=True)
+                    #点を打つ
+                    
+                    with open(fname,mode="a") as f:
+                        f.write(self.output)
+                    
+                    
+                    self.tesuu+=1
+
+                    if self.teban=="b":
+                        self.teban="w"
+                    else:
+                        self.teban="b"
+            Finish+=1
+            print("".join([str(Finish)," / ",str(length)," Finish"]))
+        print("all done")
+
 
     def PonaMethod(self):#マルチスレッドでないタイプ
         fname="".join([self.address[:-5],"_teacher.txt"])
@@ -55,14 +162,24 @@ class Gen_teacher:
 
         print("generating start")
 
+        
+        length=len(self.read_sfen)
+
+        Finish=0
+
         for i in self.read_sfen:
             self.result="1"
-            self.position = i.split()
-            if len(self.position)%2==1:#奇数なら後手勝利
-                self.result="-1"
-            else:#偶数なら先手勝利
-                self.result="1"
 
+            self.position = i.split()
+
+            if len(self.position)%2==0:#偶数なら後手勝利
+                self.result="-1"
+            else:#奇数なら先手勝利
+                self.result="1"
+                
+            self.sente_unique=""
+
+            self.gote_unique=""
             
             self.send_sfen="startpos moves"
             
@@ -99,7 +216,12 @@ class Gen_teacher:
                     self.changing_sfen()
                     #self.output_sfenに現在のboardのsfenを格納
 
+                    self.renew(j,self.teban) #renew(self,str,str)
+                    #局面を更新
+                    #評価値の関係上この順番
+                    
                     self.get_score()
+                    #次の一手を打った局面の相手の最善手の評価値を反転させたものを出す。
                     #処理して評価値をself.scoreに代入
                     
                     self.output="".join([
@@ -113,12 +235,11 @@ class Gen_teacher:
                         "\ne\n"
                     ])
                     #sfen変換終了
-                    print(".",end="",flush=True) #デバッグ用
                     
                     with open(fname,mode="a") as f:
                         f.write(self.output)
-                    self.renew(j,self.teban) #renew(self,str,str)
-                    #局面を更新
+                    
+                    
                     self.tesuu+=1
                     if self.result=="1":
                         self.result="-1"
@@ -129,6 +250,8 @@ class Gen_teacher:
                         self.teban="w"
                     else:
                         self.teban="b"
+            Finish+=1
+            print("".join([str(Finish)," / ",str(length)," Finish"]))
         print("all done")
 
 
@@ -200,61 +323,69 @@ class Gen_teacher:
 
     def get_score(self):
         self.usi.usi_position(self.send_sfen)
-        self.usi.usi_go_and_wait_bestmove("".join(["go depth ",self.go_depth,"\n"]))
+        # 先にrenewを実行することで、次の一手を打った後に
+        # 相手が指す最善手の評価値を反転させて、高めの精度の評価値反映が可能
+        self.usi.usi_go_and_wait_bestmove("".join(["depth ",self.go_depth,"\n"]))
         #ここでAyaneはUsiThinkResultクラスをthink_resultに代入。
         self.ThinkResult=self.usi.think_result.to_string().split()
         self.cp_admission=0
         self.mate_admission=0
+        self.bestmove=0
         for k in self.ThinkResult:
             if self.cp_admission==0 and "cp" in k:
                 self.cp_admission=1
             elif self.mate_admission==0 and "mate" in k:
                 self.mate_admission=1
-            
             elif self.cp_admission==1:
                 self.score=int(k)
                 self.cp_admission=2
             elif self.mate_admission==1:
+                if k=="-0" or "0":
+                    self.score=-100000
+                    self.mate_admission=2
+                # 詰みは0で投了のため、0なら問答無用で-100000
                 if int(k) < 0:
                     self.score=-100000-int(k)
                     self.mate_admission=2
                 elif int(k) > 0:
                     self.score=100000-int(k)
                     self.mate_admission=2
+        
+        # 評価値をここで反転させる
+        self.score= -1*self.score
             
         """
         独自設定
         """
-        fen="".join(self.output_sfen)
-        if int(self.tesuu) <10 and "1BR6" in fen and self.teban=="b":
-            self.unique="True"
-            self.score += 1
-        if self.unique=="True" and self.teban=="b":
-            if int(self.tesuu) <17 and self.board[7][5]=="K" or int(self.tesuu) <19 and self.board[7][6]=="K" or int(self.tesuu) <19 and self.board[8][6]=="K" or int(self.tesuu) < 21 and self.board[7][7]=="K":
-                self.score+=1
-                if int(self.tesuu) <21 and self.board[7][6]=="S" or self.board[7][3]=="S" or self.board[7][4]=="G":
-                    self.score+=1 #美濃に近づく動き
-                if int(self.tesuu) <32 and self.board[6][5]=="G" and self.board[7][6]=="S" and self.board[8][5]=="G":
-                    self.score+=2 #高美濃
-                if int(self.tesuu) <35 and self.board[8][8]=="K" and self.board[7][7]=="S" and self.board[7][8]=="L" and self.board[8][7]=="N":
-                    self.score+=2 #振り穴
-                if int(self.tesuu) <41 and self.board[7][7]=="K" and self.board[6][7]=="S" and self.board[7][6]=="G" and self.board[5][6]=="P":
-                    self.score+=3 #銀冠
-            
-        if int(self.tesuu) <10 and "6rb1" in fen and self.teban=="w":
-            self.unique="True"
-            self.score += 1
-        if self.unique=="True" and self.teban=="w":
-            if int(self.tesuu) <17 and self.board[1][3]=="k" or int(self.tesuu) <19 and self.board[1][2]=="k" or int(self.tesuu) <19 and self.board[1][1]=="k" or int(self.tesuu) < 21 and self.board[0][2]=="k":
-                self.score+=1
-                if int(self.tesuu) <21 and self.board[1][2]=="s" or self.board[1][5]=="s" or self.board[1][4]=="g":
-                    self.score+=1 #美濃に近づく動き
-                if int(self.tesuu) <32 and self.board[2][3]=="g" and self.board[1][2]=="s" and self.board[0][3]=="g":
-                    self.score+=2 #高美濃
-                if int(self.tesuu) <35 and self.board[0][0]=="k" and self.board[1][1]=="s" and self.board[1][0]=="l" and self.board[0][1]=="n":
-                    self.score+=2 #振り穴
-                if int(self.tesuu) <41 and self.board[1][1]=="k" and self.board[2][1]=="s" and self.board[1][2]=="g" and self.board[3][2]=="p":
-                    self.score+=3 #銀冠
+        if int(self.tesuu) <10 and self.board[7][2]=="R" and self.teban=="b":
+            self.sente_unique="True"
+            self.score += 10
+        if self.sente_unique=="True" and self.teban=="b":
+            if int(self.tesuu) <17 and self.board[7][3]=="S":
+                self.score+=3
+            if int(self.tesuu) <25 and self.board[7][6]=="S" and self.board[7][4]=="G" and self.board[8][5]=="G" and self.board[7][7]=="K":
+                self.score+=3 #美濃
+            if int(self.tesuu) <32 and self.board[6][5]=="G" and self.board[7][6]=="S" and self.board[8][5]=="G" and self.board[7][7]=="K":
+                self.score+=5 #高美濃
+            if int(self.tesuu) <35 and self.board[8][8]=="K" and self.board[7][7]=="S" and self.board[7][8]=="L" and self.board[8][7]=="N" and self.board[6][8]=="G":
+                self.score+=3 #振り穴
+            if int(self.tesuu) <41 and self.board[7][7]=="K" and self.board[6][7]=="S" and self.board[7][6]=="G":
+                self.score+=7 #銀冠
+        
+        if int(self.tesuu) <10 and self.board[1][6]=="r" and self.teban=="w":
+            self.gote_unique="True"
+            self.score += 10
+        if self.gote_unique=="True" and self.teban=="w":
+            if int(self.tesuu) <17 and self.board[1][5]=="s":
+                self.score+=3
+            if int(self.tesuu) <21 and self.board[1][2]=="s" and self.board[1][4]=="g" and self.board[0][3]=="g" and self.board[7][7]=="k":
+                self.score+=3 #美濃
+            if int(self.tesuu) <32 and self.board[2][3]=="g" and self.board[1][2]=="s" and self.board[0][3]=="g":
+                self.score+=5 #高美濃
+            if int(self.tesuu) <35 and self.board[0][0]=="k" and self.board[1][1]=="s" and self.board[1][0]=="l" and self.board[0][1]=="n" and self.board[0][2]=="g":
+                self.score+=3 #振り穴
+            if int(self.tesuu) <41 and self.board[1][1]=="k" and self.board[2][1]=="s" and self.board[1][2]=="g":
+                self.score+=7 #銀冠
 
 
 
@@ -360,18 +491,29 @@ class Conduct_Converter:
             self.setoption_name_DepthLimit_value
         ])
 
-    def Calling_Class(self):
-        gen = Gen_teacher(self.opFile,self.SendComTuple,self.exeFile,self.depth)
+        self.gen = Gen_teacher(self.opFile,self.SendComTuple,self.exeFile,self.depth)
+
+
+    def Calling_PonaMethod(self):
         #クラスを短く。
         #__init__に値を渡してクラス生成
-        gen.read()
+        self.gen.read()
         #ファイルを開く
-        gen.PonaMethod()
+        self.gen.PonaMethod()
+    
+    def Calling_Non_lambda(self):
+
+        self.gen.read()
+        self.gen.Non_lambda()
 
 #ここから実行
 
 if __name__=="__main__":
     conduct=Conduct_Converter()
-    # conduct.Calling_Class()
-    #通常プロセス
-    conduct.Calling_Class()
+
+    # 通常プロセス
+    conduct.Calling_PonaMethod()
+
+    # 全試合を引き分けにする(result=0)
+    # 大量の短い棋譜を教師にする場合はおすすめ
+    #conduct.Calling_Non_lambda
