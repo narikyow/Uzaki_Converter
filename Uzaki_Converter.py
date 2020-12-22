@@ -34,7 +34,7 @@ class Gen_teacher:
             self.read_sfen=tuple([i for i in pos])
             #1行ごとに読み取り
     
-    def Non_Lambda(self):
+    def None_Lambda(self):
         #引き分けの棋譜とかはこれで。
         #例えば、序盤16手目までを集中的に学習させたいけど、棋譜が短すぎなときなんかに使うとよい
         self.result="0"
@@ -344,6 +344,7 @@ class Gen_teacher:
                     self.score=-100000
                     self.mate_admission=2
                 # 詰みは0で投了のため、0なら問答無用で-100000
+                # 後でしっかり100000に変換されるため、指し手は正しく評価される
                 if int(k) < 0:
                     self.score=-100000-int(k)
                     self.mate_admission=2
@@ -504,7 +505,7 @@ class Conduct_Converter:
     def Calling_Non_lambda(self):
 
         self.gen.read()
-        self.gen.Non_lambda()
+        self.gen.None_lambda()
 
 #ここから実行
 
@@ -516,4 +517,4 @@ if __name__=="__main__":
 
     # 全試合を引き分けにする(result=0)
     # 大量の短い棋譜を教師にする場合はおすすめ
-    #conduct.Calling_Non_lambda
+    #conduct.Calling_None_lambda
