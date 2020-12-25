@@ -27,7 +27,7 @@ result 0を常に出させるようにしただけです。
 テストしてないので、なんかあったら教えてください。  
 
 
-# 使い方：
+# 使い方(Uzaki_Converter)：
 Pythonは自力で！！
 
 1. YaneuraOu氏のAyaneruをダウンロード
@@ -41,19 +41,32 @@ https://github.com/yaneurao/Ayane
 
 4. sfenファイルを持ってきて、cmdから実行
 
+# 使い方(Super_Uzaki_Converter)：
+
+1. YaneuraOu氏のAyaneruをダウンロード
+https://github.com/yaneurao/Ayane
+
+2. Super_Uzaki_Converterをダウンロード
+名前の由来はPythonのエラーがうざいから。
+(自分の力不足)
+
+3. Super_Uzaki_Converterの場所にAyaneruのshogiフォルダがあればOK
+
+4. Super_Uzaki_Converterを開いてスレッド数を調整(Pythonわからない人はやめておく)  
+※  
+最初は小さめに設定してあります  
+初期:  
+総使用スレッド数は4,  
+2つに並行処理してます  
+
+5. sfenファイルを持ってきて、cmdから実行
+
 # 最近
 resultを、sfenの要素数から勝敗判別して正しい値を出すようにしました。  
-それと、YaneuraOuのgoコマンドにもdepthを設定することで、1sで50KBくらい(depth 1のとき)書き込むようになりました  
-近々、並行処理に対応した「Super_Uzaki_Converter.py」を作りたい！！  
-
-# 反省
-並列処理に苦戦して実装できなかった。  
-とりあえず、並列実行するためのbatchファイルでも作ればいいか。 
-今後も時間を確保する余裕はなさそうなので、更新は未定  
-学校の課題があああああぁぁぁぁぁぁ!!    
+並行処理対応で、3000KBのファイルを4,5分(並行処理:6)で  75000KBの教師局面に変換できるようになりました  
+大分高速化しました。
   
 
 
 # ブログ
-更新頻度：ほとんど更新しないかも…
 https://sites.google.com/view/kiwi3shogiblog/%E3%83%9B%E3%83%BC%E3%83%A0?authuser=0
