@@ -59,6 +59,8 @@ https://github.com/yaneurao/Ayane
 総使用スレッド数は4,  
 2つに並行処理してます  
 
+6. tmp_kif という名前のフォルダを同じ階層に作成
+
 5. sfenファイルを持ってきて、cmdから実行
 
 # 最近
