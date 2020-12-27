@@ -10,8 +10,8 @@ This is written in Python. Uzaki means Japanese famous animation "Uzaki chan ha 
   
 このコンバータは現状、初期局面から始まるsfenしか変換できません。
 ### 並行処理（Super_Uzaki_Converter.pyのMulti_Pona）は、  
-### *** Conduct_Converterクラスの__init__で使うスレッド数を正しく設定 *** してから使ってください  
-### *** PCが故障しても責任は取れません ***  
+### Conduct_Converterクラスの__init__で使うスレッド数を正しく設定してから使ってください  
+### PCが故障しても責任は取れません
 
 ## 2020/12/22 大幅更新
 詰みまでしっかり教師にできます（たぶんいらない機能）  
