@@ -435,7 +435,7 @@ class Conduct_Converter:
 
         """
         
-        self.workers=6
+        self.workers=2
         # 棋譜を何スレッドに分割して処理するか
         # 棋譜処理用のスレッド
         # default = 4 (int)
