@@ -250,9 +250,7 @@ class Multi_Gen_teacher:
         if tegoma_option==0:# 駒を取る
             if  "+" in self.board[self.y2][self.x2]:
                 # 成り駒の処理
-                print("nari!\n",flush=True)
                 self.true_koma=self.board[self.y2][self.x2][1].swapcase()
-                print(self.true_koma)
             
             else:
                 self.true_koma = self.board[self.y2][self.x2].swapcase()
