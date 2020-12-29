@@ -1,3 +1,12 @@
+# 最近
+不調で動かなくなりました…
+いい機会なのでビットボード使おうと思います。それまで待って
+
+resultを、sfenの要素数から勝敗判別して正しい値を出すようにしました。  
+並行処理対応で、3000KBのファイルを4,5分(並行処理:6)で  75000KBの教師局面に変換できるようになりました  
+大分高速化しました。
+  
+
 # Uzaki_Converter
 This Converter ,Uzaki_Converter, can change the type of sfen into the type of txt that can be "Teacher_Kifu".
 This is written in Python. Uzaki means Japanese famous animation "Uzaki chan ha asobitai",in English,"Uzaki want to play". I am not good at English, so I may makes you misunderstand. But You should watch The Animation "Uzaki chan ha asobitai"  
@@ -66,14 +75,7 @@ https://github.com/yaneurao/Ayane
 
 6. tmp_kif という名前のフォルダを同じ階層に作成
 
-5. sfenファイルを持ってきて、cmdから実行
-
-# 最近
-resultを、sfenの要素数から勝敗判別して正しい値を出すようにしました。  
-並行処理対応で、3000KBのファイルを4,5分(並行処理:6)で  75000KBの教師局面に変換できるようになりました  
-大分高速化しました。
-  
-
+5. sfenファイルを持ってきて、cmdから実行  
 
 # ブログ
 https://sites.google.com/view/kiwi3shogiblog/%E3%83%9B%E3%83%BC%E3%83%A0?authuser=0
