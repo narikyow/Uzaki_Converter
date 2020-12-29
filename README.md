@@ -40,34 +40,20 @@ mate後もしっかりやってくれるので、終盤教師作れます(笑)
 ### 引き分けの棋譜も教師局面にできるNone_Lambda関数を追加!!!
 result 0を常に出させるようにしただけです。  
 テストしてないので、なんかあったら教えてください。  
-
-
-# 使い方(Uzaki_Converter)：
-Pythonは自力で！！
-
-1. YaneuraOu氏のAyaneruをダウンロード
-https://github.com/yaneurao/Ayane
-
-2. Uzaki_Converterをダウンロード
-名前の由来はPythonのエラーがうざいから。
-(自分の力不足)
-
-3. Uzaki_Converterの場所にAyaneruのshogiフォルダがあればOK
-
-4. sfenファイルを持ってきて、cmdから実行
-
-# 使い方(Super_Uzaki_Converter)：
+  
+  
+# 使い方(Cute_Uzaki_Converter)：
 
 1. YaneuraOu氏のAyaneruをダウンロード
 https://github.com/yaneurao/Ayane
 
-2. Super_Uzaki_Converterをダウンロード
+2. Cute_Uzaki_Converterをダウンロード
 名前の由来はPythonのエラーがうざいから。
 (自分の力不足)
 
-3. Super_Uzaki_Converterの場所にAyaneruのshogiフォルダがあればOK
+3. Cute_Uzaki_Converterの場所にAyaneruのshogiフォルダがあればOK
 
-4. Super_Uzaki_Converterを開いてスレッド数を調整(Pythonわからない人はやめておく)  
+4. Cute_Uzaki_Converterを開いてスレッド数を調整(Pythonわからない人はやめておく)  
 ※  
 最初は小さめに設定してあります  
 初期:  
